@@ -107,6 +107,7 @@ class DodajOsobe():
         self.kod_pocztowy_label.grid(row=6, column=0)
         self.kod_pocztowy_entry = Entry(self.okno)
         self.kod_pocztowy_entry.grid(row=6, column=1)
+        self.kod_pocztowy_entry.bind("<Return>", self.zapisz_osobe)
 
         self.zapisz_button = Button(self.okno, text="Zapisz", command=self.zapisz_osobe)
         self.zapisz_button.grid(row=7, column=0, pady=10)
@@ -187,9 +188,10 @@ class SzukajOsobe:
         # etykiety i pola do wpisania danych
         self.pesel_label = Label(self.okno, text="PESEL:")
         self.pesel_entry = Entry(self.okno)
+        self.pesel_entry.bind("<Return>", self.szukaj_osobe)
         self.nazwisko_label = Label(self.okno, text="Nazwisko:")
         self.nazwisko_entry = Entry(self.okno)
-
+        self.nazwisko_entry.bind("<Return>", self.szukaj_osobe)
         # przyciski
         self.szukaj_button = Button(self.okno, text="Szukaj", command=self.szukaj_osobe)
         self.anuluj_button = Button(self.okno, text="Anuluj", command=self.okno.destroy)
@@ -341,41 +343,60 @@ class EdycjaOsoby:
         self.edycja_osoby.title("Edycja osoby")
         self.edycja_osoby.geometry("400x300")
 
-    
-        # Label i Entry dla każdego pola danych osobowych
-        self.edycja_osoby_label=Label(self.edycja_osoby, text="PESEL:").grid(row=0, column=0)
+
+       # Label i Entry dla każdego pola danych osobowych
+        self.edycja_osoby_label = Label(self.edycja_osoby, text="PESEL:")
         self.pesel_var = StringVar(self.edycja_osoby, value=self.osoba["pesel"])
-        self.edycja_osoby_entry=Entry(self.edycja_osoby, textvariable=self.pesel_var).grid(row=0, column=1)
+        self.edycja_osoby_entry = Entry(self.edycja_osoby, textvariable=self.pesel_var)
+        self.edycja_osoby_label.grid(row=0, column=0)
+        self.edycja_osoby_entry.grid(row=0, column=1)
+        self.edycja_osoby_entry.bind("<Return>", self.zapisz_zmiany)
 
-        self.edycja_osoby_label1= Label(self.edycja_osoby, text="Imię:").grid(row=1, column=0)
+        self.edycja_osoby_label1 = Label(self.edycja_osoby, text="Imię:")
         self.imie_var = StringVar(self.edycja_osoby, value=self.osoba["imię"])
-        self.edycja_osoby_entry1=Entry(self.edycja_osoby, textvariable=self.imie_var).grid(row=1, column=1)
+        self.edycja_osoby_entry1 = Entry(self.edycja_osoby, textvariable=self.imie_var)
+        self.edycja_osoby_label1.grid(row=1, column=0)
+        self.edycja_osoby_entry1.grid(row=1, column=1)
+        self.edycja_osoby_entry1.bind("<Return>", self.zapisz_zmiany)
 
-        self.edycja_osoby_label2=Label(self.edycja_osoby, text="Nazwisko:").grid(row=2, column=0)
+        self.edycja_osoby_label2 = Label(self.edycja_osoby, text="Nazwisko:")
         self.nazwisko_var = StringVar(self.edycja_osoby, value=self.osoba["nazwisko"])
-        self.edycja_osoby_entry2=Entry(self.edycja_osoby, textvariable=self.nazwisko_var).grid(row=2, column=1)
+        self.edycja_osoby_entry2 = Entry(self.edycja_osoby, textvariable=self.nazwisko_var)
+        self.edycja_osoby_label2.grid(row=2, column=0)
+        self.edycja_osoby_entry2.grid(row=2, column=1)
+        self.edycja_osoby_entry2.bind("<Return>", self.zapisz_zmiany)
 
-        self.edycja_osoby_label3=Label(self.edycja_osoby, text="Email:").grid(row=3, column=0)
+        self.edycja_osoby_label3 = Label(self.edycja_osoby, text="Email:")
         self.email_var = StringVar(self.edycja_osoby, value=self.osoba["email"])
-        self.edycja_osoby_entry3=Entry(self.edycja_osoby, textvariable=self.email_var).grid(row=3, column=1)
+        self.edycja_osoby_entry3 = Entry(self.edycja_osoby, textvariable=self.email_var)
+        self.edycja_osoby_label3.grid(row=3, column=0)
+        self.edycja_osoby_entry3.grid(row=3, column=1)
+        self.edycja_osoby_entry3.bind("<Return>", self.zapisz_zmiany)
 
-        self.edycja_osoby_label4=Label(self.edycja_osoby, text="Wiek:").grid(row=4, column=0)
+        self.edycja_osoby_label4 = Label(self.edycja_osoby, text="Wiek:")
         self.wiek_var = StringVar(self.edycja_osoby, value=self.osoba["wiek"])
-        self.edycja_osoby_entry4=Entry(self.edycja_osoby, textvariable=self.wiek_var).grid(row=4, column=1)
+        self.edycja_osoby_entry4 = Entry(self.edycja_osoby, textvariable=self.wiek_var)
+        self.edycja_osoby_label4.grid(row=4, column=0)
+        self.edycja_osoby_entry4.grid(row=4, column=1)
+        self.edycja_osoby_entry4.bind("<Return>", self.zapisz_zmiany)
 
-        self.edycja_osoby5=Label(self.edycja_osoby, text="Adres:").grid(row=5, column=0)
+        self.edycja_osoby_label5=Label(self.edycja_osoby, text="Adres:").grid(row=5, column=0)
         self.adres_var = StringVar(self.edycja_osoby, value=self.osoba["adres"])
-        self.edycja_osob5y=Entry(self.edycja_osoby, textvariable=self.adres_var).grid(row=5, column=1)
+        self.edycja_osoby_entry5=Entry(self.edycja_osoby, textvariable=self.adres_var)
+        self.edycja_osoby_entry5.grid(row=5, column=1)
+        self.edycja_osoby_entry5.bind("<Return>", self.zapisz_zmiany)
 
-        self.edycja_osoby6=Label(self.edycja_osoby, text="Kod pocztowy:").grid(row=6, column=0)
+        self.edycja_osoby_label6=Label(self.edycja_osoby, text="Kod pocztowy:").grid(row=6, column=0)
         self.kod_pocztowy_var = StringVar(self.edycja_osoby, value=self.osoba["kod_pocztowy"])
-        self.edycja_osoby6=Entry(self.edycja_osoby, textvariable=self.kod_pocztowy_var).grid(row=6, column=1)
+        self.edycja_osoby_entry6=Entry(self.edycja_osoby, textvariable=self.kod_pocztowy_var)
+        self.edycja_osoby_entry6.grid(row=6, column=1)
+        self.edycja_osoby_entry6.bind("<Return>", self.zapisz_zmiany)
 
         # Przyciski
         self.edycja_osoby_button=Button(self.edycja_osoby, text="Zapisz", command=self.zapisz_zmiany).grid(row=7, column=0, pady=10)
         self.edycja_osoby_button1=Button(self.edycja_osoby, text="Anuluj", command=self.zamknij_okno).grid(row=7, column=1, pady=10)
 
-    def zapisz_zmiany(self):
+    def zapisz_zmiany(self, event=None):
         # Pobierz wprowadzone dane z pól Entry
         pesel = self.pesel_var.get()
         imie = self.imie_var.get()
@@ -391,9 +412,9 @@ class EdycjaOsoby:
             return
 
         # Sprawdzenie poprawności wprowadzonego PESEL
-        if not re.match(r"^\d{11}$", pesel):
-           messagebox.showerror("Błąd", "Nieprawidłowy PESEL!")
-           return
+        #if not re.match(r"^\d{11}$", pesel):
+        #   messagebox.showerror("Błąd", "Nieprawidłowy PESEL!")
+         #  return
 
         # Sprawdzenie poprawności wprowadzonego wieku
         if not re.match(r"^\d{1,3}$", wiek):
