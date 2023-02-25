@@ -1,0 +1,444 @@
+import tkinter as tk
+import json
+from tkinter import *
+from tkinter import messagebox
+from dataclasses import dataclass   
+import re
+
+@dataclass
+class Osoba:
+    pesel: str
+    imie: str
+    nazwisko: str
+    email: str
+    wiek: int
+    adres: str
+    kod_pocztowy: str
+
+
+class OknoGlowne():
+
+    def __init__(self):
+        self.okno = tk.Tk()
+        self.okno.title("Rejestrator danych osobowych")
+        self.okno.geometry("300x300")
+        self.okno.resizable(False,False)
+        self.okno.configure(bg=("#5499c4"))
+       
+
+        self.dodaj_przycisk()
+       
+
+        self.wyswietl_przycisk()
+        self.anuluj_przycisk()
+        
+    def dodaj_przycisk(self):
+        przycisk = tk.Button(self.okno, text="Dodaj osobę", bd=0, bg="white", fg="black", font=("Arial", 12),
+                             relief="raised", padx=10, pady=5, borderwidth=1, command=self.show_dodaj_osobe)
+        przycisk.pack(pady=10)
+        przycisk.configure(highlightthickness=1, highlightbackground="#86fc6b", highlightcolor="#86fc6b",
+                           activebackground="#23af04", activeforeground="white",cursor="hand2")
+
+    def wyswietl_przycisk(self):
+        przycisk = tk.Button(self.okno, text="Wyświetl osobę", bd=0, bg="white", fg="black", font=("Arial", 12),
+                             relief="raised", padx=10, pady=5, borderwidth=1, command=self.show_szukaj_osobe)
+        przycisk.pack(pady=10)
+        przycisk.configure(highlightthickness=1, highlightbackground="light grey", highlightcolor="light grey",
+                           activebackground="#da5b12", activeforeground="white", cursor="hand2")
+
+    def anuluj_przycisk(self):
+        przycisk = tk.Button(self.okno, text="Zakończ", bd=0, bg="white", fg="black", font=("Arial", 12),
+                             relief="raised", padx=10, pady=5, borderwidth=1, command=self.okno.destroy)
+        przycisk.pack(pady=10)
+        przycisk.configure(highlightthickness=1, highlightbackground="light grey", highlightcolor="light grey",
+                           activebackground="#9e3f55", activeforeground="white", cursor="hand2")
+
+    
+    def show_dodaj_osobe(self):
+        self.dodaj_osobe = DodajOsobe()
+
+    def show_szukaj_osobe(self):
+        self.szukaj_osobe = SzukajOsobe(master=self.okno)
+
+    
+    def run(self):
+        self.okno.mainloop()
+
+
+class DodajOsobe():
+    def __init__(self):
+        self.okno = tk.Toplevel()
+        self.okno.title("Dodaj osobe")
+        self.okno.geometry("250x200")
+        self.create_widgets()
+        self.okno.mainloop()  
+    def create_widgets(self):
+        self.pesel_label = Label(self.okno, text="PESEL:")
+        self.pesel_label.grid(row=0, column=0)
+        self.pesel_entry = Entry(self.okno)
+        self.pesel_entry.grid(row=0, column=1)
+
+        self.imie_label = Label(self.okno, text="Imie:")
+        self.imie_label.grid(row=1, column=0)
+        self.imie_entry = Entry(self.okno)
+        self.imie_entry.grid(row=1, column=1)
+
+        self.nazwisko_label = Label(self.okno, text="Nazwisko:")
+        self.nazwisko_label.grid(row=2, column=0)
+        self.nazwisko_entry = Entry(self.okno)
+        self.nazwisko_entry.grid(row=2, column=1)
+
+        self.email_label = Label(self.okno, text="Email:")
+        self.email_label.grid(row=3, column=0)
+        self.email_entry = Entry(self.okno)
+        self.email_entry.grid(row=3, column=1)
+
+        self.wiek_label = Label(self.okno, text="Wiek:")
+        self.wiek_label.grid(row=4, column=0)
+        self.wiek_entry = Entry(self.okno)
+        self.wiek_entry.grid(row=4, column=1)
+
+        self.adres_label =Label(self.okno, text="Adres:")
+        self.adres_label.grid(row=5, column=0)
+        self.adres_entry = Entry(self.okno)
+        self.adres_entry.grid(row=5, column=1)
+
+        self.kod_pocztowy_label = Label(self.okno, text="Kod pocztowy:")
+        self.kod_pocztowy_label.grid(row=6, column=0)
+        self.kod_pocztowy_entry = Entry(self.okno)
+        self.kod_pocztowy_entry.grid(row=6, column=1)
+
+        self.zapisz_button = Button(self.okno, text="Zapisz", command=self.zapisz_osobe)
+        self.zapisz_button.grid(row=7, column=0, pady=10)
+
+        self.anuluj_button = Button(self.okno, text="Anuluj", command=self.okno.destroy)
+        self.anuluj_button.grid(row=7, column=1, pady=10)
+
+
+    def zapisz_osobe(self) -> None:
+        # Pobranie wartości z pól tekstowych
+        pesel = self.pesel_entry.get()
+        imie = self.imie_entry.get()
+        nazwisko = self.nazwisko_entry.get()
+        email = self.email_entry.get()
+        wiek = self.wiek_entry.get()
+        adres = self.adres_entry.get()
+        kod_pocztowy = self.kod_pocztowy_entry.get()
+        baza_osob = []
+        # Sprawdzenie czy wszystkie pola zostały uzupełnione
+        if not all([pesel, imie, nazwisko, email, wiek, adres, kod_pocztowy]):
+            messagebox.showerror("Błąd", "Wszystkie pola są wymagane!")
+            return
+
+        # Sprawdzenie poprawności wprowadzonego PESEL
+        #if not re.match(r"^\d{11}$", pesel):
+         #   messagebox.showerror("Błąd", "Nieprawidłowy PESEL!")
+          #  return
+
+        # Sprawdzenie poprawności wprowadzonego wieku
+        if not re.match(r"^\d{1,3}$", wiek):
+            messagebox.showerror("Błąd", "Nieprawidłowy wiek!")
+            return
+
+        # Sprawdzenie poprawności wprowadzonego kodu pocztowego
+        if not re.match(r"^\d{2}-\d{3}$", kod_pocztowy):
+            messagebox.showerror("Błąd", "Nieprawidłowy kod pocztowy!")
+            return
+
+        # Stworzenie obiektu osoby i zapisanie go do pliku JSON
+        osoba_dict = {
+            "pesel":pesel,
+            "imię": imie,
+            "nazwisko": nazwisko,
+            "email":email,
+            "wiek": wiek,
+            "adres": adres,
+            "kod_pocztowy": kod_pocztowy
+        }
+        try:
+            with open("baza_osob.json", "r") as plik:
+                baza_osob = json.load(plik)
+        except FileNotFoundError:
+            baza_osob = []
+        baza_osob.append(osoba_dict)
+
+        
+        try:
+            with open("baza_osob.json", "w") as plik:
+                    json.dump(baza_osob, plik,indent=4)
+        except FileNotFoundError:
+                baza_osob = []
+        messagebox.showinfo("Informacja", "Osoba została dodana do bazy danych!")
+        self.okno.destroy()
+
+         
+class SzukajOsobe:
+    def __init__(self, master):
+        
+        self.master = master
+        self.okno = tk.Toplevel(self.master)
+        self.okno.title("Szukaj osobę")
+        self.okno.geometry("250x200")
+        self.create_widgets()
+        self.okno.mainloop()
+        
+    def create_widgets(self):
+        
+        # etykiety i pola do wpisania danych
+        self.pesel_label = Label(self.okno, text="PESEL:")
+        self.pesel_entry = Entry(self.okno)
+        self.nazwisko_label = Label(self.okno, text="Nazwisko:")
+        self.nazwisko_entry = Entry(self.okno)
+
+        # przyciski
+        self.szukaj_button = Button(self.okno, text="Szukaj", command=self.szukaj_osobe)
+        self.anuluj_button = Button(self.okno, text="Anuluj", command=self.okno.destroy)
+
+        # umieszczenie widżetów na ekranie
+        self.pesel_label.grid(row=0, column=0, padx=5, pady=5)
+        self.pesel_entry.grid(row=0, column=1, padx=5, pady=5)
+        self.nazwisko_label.grid(row=1, column=0, padx=5, pady=5)
+        self.nazwisko_entry.grid(row=1, column=1, padx=5, pady=5)
+        self.szukaj_button.grid(row=2, column=0, padx=5, pady=5)
+        self.anuluj_button.grid(row=2, column=1, padx=5, pady=5)
+    
+    def dane_osoby(self, osoba):
+        self.dane_osoby = DaneOsoby(self, osoba) 
+
+    
+    def szukaj_osobe(self, pesel=None, nazwisko=None):
+        baza_osob = []
+        pesel = self.pesel_entry.get()
+        nazwisko = self.nazwisko_entry.get()
+        # Wczytaj dane z pliku bazy_osob.json
+        with open("baza_osob.json", "r") as f:
+            baza_osob = json.load(f)
+        znalezione_osoby = []
+        # Szukaj osoby po peselu lub nazwisku
+        for osoba in baza_osob:
+            if pesel and osoba["pesel"] == pesel:
+                znalezione_osoby.append(osoba)
+                
+            elif nazwisko and osoba["nazwisko"] == nazwisko:
+                znalezione_osoby.append(osoba)
+        if len(znalezione_osoby) == 0:
+            messagebox.showerror("Błąd", "Nie znaleziono osoby o podanym PESELu lub nazwisku.")
+        elif len(znalezione_osoby) == 1:
+            DaneOsoby(self, znalezione_osoby[0])
+            self.okno.destroy()
+        else:
+            self.top = tk.Toplevel()
+            self.top.title("Wybierz osobę")
+            for osoba in znalezione_osoby:
+                button = Button(self.top, text=f"{osoba['imię']} {osoba['nazwisko']}", command=lambda o=osoba: self.wybierz_osobe(o))
+                button.pack(pady=5)
+
+    def wybierz_osobe(self, osoba):
+        DaneOsoby(self, osoba)
+        self.top.destroy()
+        self.okno.destroy()
+
+
+class DaneOsoby:
+    def __init__(self, master, osoba):
+        self.master = master
+        self.osoba = osoba
+        self.okno = tk.Toplevel()
+        self.okno.title("Dane osoby")
+    
+        # label
+        self.pesel_label = Label(self.okno, text="PESEL:")
+        self.pesel_label.grid(row=0, column=0, sticky=W)
+        self.imie_label = Label(self.okno, text="Imię:")
+        self.imie_label.grid(row=1, column=0, sticky=W)
+        self.nazwisko_label = Label(self.okno, text="Nazwisko:")
+        self.nazwisko_label.grid(row=2, column=0, sticky=W)
+        self.email_label = Label(self.okno, text="Email:")
+        self.email_label.grid(row=3, column=0, sticky=W)
+        self.wiek_label = Label(self.okno, text="Wiek:")
+        self.wiek_label.grid(row=4, column=0, sticky=W)
+        self.adres_label = Label(self.okno, text="Adres:")
+        self.adres_label.grid(row=5, column=0, sticky=W)
+        self.kod_label = Label(self.okno, text="Kod pocztowy:")
+        self.kod_label.grid(row=6, column=0, sticky=W)
+
+
+        # entries
+        self.pesel_entry = Entry(self.okno, state='normal')
+        self.pesel_entry.grid(row=0, column=1)
+        self.imie_entry = Entry(self.okno, state='normal')
+        self.imie_entry.grid(row=1, column=1)
+        self.nazwisko_entry = Entry(self.okno, state='normal')
+        self.nazwisko_entry.grid(row=2, column=1)
+        self.email_entry = Entry(self.okno, state='normal')
+        self.email_entry.grid(row=3, column=1)
+        self.wiek_entry = Entry(self.okno, state='normal')
+        self.wiek_entry.grid(row=4, column=1)
+        self.adres_entry = Entry(self.okno, state='normal')
+        self.adres_entry.grid(row=5, column=1)
+        self.kod_entry = Entry(self.okno, state='normal')
+        self.kod_entry.grid(row=6, column=1)
+
+        # fill entries with osoba data
+        # fill entries with osoba data
+        self.pesel_entry.insert(0, self.osoba['pesel'])
+        self.imie_entry.insert(0, self.osoba['imię'])
+        self.nazwisko_entry.insert(0, self.osoba['nazwisko'])
+        self.email_entry.insert(0, self.osoba['email'])
+        self.wiek_entry.insert(0, str(self.osoba['wiek']))
+        self.adres_entry.insert(0, self.osoba['adres'])
+        self.kod_entry.insert(0, self.osoba['kod_pocztowy'])
+
+        
+                # set entries to readonly
+        self.pesel_entry.config(state='readonly')
+        self.imie_entry.config(state='readonly')
+        self.nazwisko_entry.config(state='readonly')
+        self.email_entry.config(state='readonly')
+        self.wiek_entry.config(state='readonly')
+        self.adres_entry.config(state='readonly')
+        self.kod_entry.config(state='readonly')
+        # buttons
+        self.edit_button = Button(self.okno, text="Edytuj dane", command=self.edit_osoba)
+        self.edit_button.grid(row=7, column=0)
+        self.delete_button = Button(self.okno, text="Usuń osobę", command=self.usun_osobe)
+        self.delete_button.grid(row=7, column=1)
+        self.cancel_button = Button(self.okno, text="Anuluj", command=self.okno.destroy)
+        self.cancel_button.grid(row=7, column=2)
+
+    def edit_osoba(self):
+        # create new window for editing osoba
+        self.edit_osoba = EdycjaOsoby(self, self.osoba)
+        self.okno.destroy()
+    def usun_osobe(self):
+        confirmed = messagebox.askyesno("Usuń osobę", "Czy na pewno chcesz usunąć tę osobę?")
+        if confirmed:
+            try:
+                with open("baza_osob.json", "r") as f:
+                    osoby = json.load(f)
+            except FileNotFoundError:
+                messagebox.showerror("Błąd", "Nie znaleziono pliku baza_osob.json.")
+                return
+
+            osoby = [osoba for osoba in osoby if osoba["pesel"] != self.pesel_entry.get()]
+
+            try:
+                with open("baza_osob.json", "w") as f:
+                    json.dump(osoby, f, indent=4)
+            except IOError:
+                messagebox.showerror("Błąd", "Wystąpił błąd podczas zapisywania pliku.")
+                return
+
+            messagebox.showinfo("Usunięto osobę", "Pomyślnie usunięto osobę z bazy.")
+            self.okno.destroy()
+
+
+class EdycjaOsoby:
+    def __init__(self, master, osoba):
+        self.master = master
+        self.osoba = osoba
+        self.edycja_osoby = tk.Toplevel()
+        self.edycja_osoby.title("Edycja osoby")
+        self.edycja_osoby.geometry("400x300")
+
+    
+        # Label i Entry dla każdego pola danych osobowych
+        self.edycja_osoby_label=Label(self.edycja_osoby, text="PESEL:").grid(row=0, column=0)
+        self.pesel_var = StringVar(self.edycja_osoby, value=self.osoba["pesel"])
+        self.edycja_osoby_entry=Entry(self.edycja_osoby, textvariable=self.pesel_var).grid(row=0, column=1)
+
+        self.edycja_osoby_label1= Label(self.edycja_osoby, text="Imię:").grid(row=1, column=0)
+        self.imie_var = StringVar(self.edycja_osoby, value=self.osoba["imię"])
+        self.edycja_osoby_entry1=Entry(self.edycja_osoby, textvariable=self.imie_var).grid(row=1, column=1)
+
+        self.edycja_osoby_label2=Label(self.edycja_osoby, text="Nazwisko:").grid(row=2, column=0)
+        self.nazwisko_var = StringVar(self.edycja_osoby, value=self.osoba["nazwisko"])
+        self.edycja_osoby_entry2=Entry(self.edycja_osoby, textvariable=self.nazwisko_var).grid(row=2, column=1)
+
+        self.edycja_osoby_label3=Label(self.edycja_osoby, text="Email:").grid(row=3, column=0)
+        self.email_var = StringVar(self.edycja_osoby, value=self.osoba["email"])
+        self.edycja_osoby_entry3=Entry(self.edycja_osoby, textvariable=self.email_var).grid(row=3, column=1)
+
+        self.edycja_osoby_label4=Label(self.edycja_osoby, text="Wiek:").grid(row=4, column=0)
+        self.wiek_var = StringVar(self.edycja_osoby, value=self.osoba["wiek"])
+        self.edycja_osoby_entry4=Entry(self.edycja_osoby, textvariable=self.wiek_var).grid(row=4, column=1)
+
+        self.edycja_osoby5=Label(self.edycja_osoby, text="Adres:").grid(row=5, column=0)
+        self.adres_var = StringVar(self.edycja_osoby, value=self.osoba["adres"])
+        self.edycja_osob5y=Entry(self.edycja_osoby, textvariable=self.adres_var).grid(row=5, column=1)
+
+        self.edycja_osoby6=Label(self.edycja_osoby, text="Kod pocztowy:").grid(row=6, column=0)
+        self.kod_pocztowy_var = StringVar(self.edycja_osoby, value=self.osoba["kod_pocztowy"])
+        self.edycja_osoby6=Entry(self.edycja_osoby, textvariable=self.kod_pocztowy_var).grid(row=6, column=1)
+
+        # Przyciski
+        self.edycja_osoby_button=Button(self.edycja_osoby, text="Zapisz", command=self.zapisz_zmiany).grid(row=7, column=0, pady=10)
+        self.edycja_osoby_button1=Button(self.edycja_osoby, text="Anuluj", command=self.zamknij_okno).grid(row=7, column=1, pady=10)
+
+    def zapisz_zmiany(self):
+        # Pobierz wprowadzone dane z pól Entry
+        pesel = self.pesel_var.get()
+        imie = self.imie_var.get()
+        nazwisko = self.nazwisko_var.get()
+        email = self.email_var.get()
+        wiek = self.wiek_var.get()
+        adres = self.adres_var.get()
+        kod_pocztowy = self.kod_pocztowy_var.get()
+
+        # Sprawdzenie czy wszystkie pola zostały uzupełnione
+        if not all([pesel, imie, nazwisko, email, wiek, adres, kod_pocztowy]):
+            messagebox.showerror("Błąd", "Wszystkie pola są wymagane!")
+            return
+
+        # Sprawdzenie poprawności wprowadzonego PESEL
+        if not re.match(r"^\d{11}$", pesel):
+           messagebox.showerror("Błąd", "Nieprawidłowy PESEL!")
+           return
+
+        # Sprawdzenie poprawności wprowadzonego wieku
+        if not re.match(r"^\d{1,3}$", wiek):
+            messagebox.showerror("Błąd", "Nieprawidłowy wiek!")
+            return
+
+        if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
+            messagebox.showerror("Błąd", "Niepoprawny adres email")
+            return
+
+        # Sprawdzenie poprawności wprowadzonego kodu pocztowego
+        if not re.match(r"^\d{2}-\d{3}$", kod_pocztowy):
+            messagebox.showerror("Błąd", "Nieprawidłowy kod pocztowy!")
+            return
+
+        # Otwórz plik baza_osob.json do odczytu
+        
+
+        with open("baza_osob.json", "r") as plik:
+                baza_osob = json.load(plik)
+
+        for osoba in baza_osob:
+            if osoba["pesel"] == pesel and osoba["nazwisko"] == nazwisko:
+                osoba["pesel"] = pesel
+                osoba["imię"] = imie
+                osoba["nazwisko"] = nazwisko
+                osoba["email"] = email
+                osoba["wiek"] = wiek
+                osoba["adres"] = adres
+                osoba["kod_pocztowy"] = kod_pocztowy
+
+        with open("baza_osob.json", "w") as plik:
+                json.dump(baza_osob, plik, indent=4)
+       
+
+
+        # Wyświetl komunikat o sukcesie i zamknij okno edycji osoby
+        messagebox.showinfo("Sukces", "Dane zostały zapisane")
+        self.zamknij_okno()
+    
+    def zamknij_okno(self):
+        self.edycja_osoby.destroy()
+
+
+okno = OknoGlowne()
+okno.run()
+
+   
